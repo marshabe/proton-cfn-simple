@@ -6,6 +6,8 @@ Lambda function parameters like the function handler, runtime, memory size, time
 
 The template also provisions a CodePipeline based pipeline to pull your application source code before building and deploying it to the Proton service.
 
+You can use [this sample repo](https://github.com/jritsema/lambda-function) for an extremely simple demo.
+
 ## Parameters
 
 ### Service Inputs
