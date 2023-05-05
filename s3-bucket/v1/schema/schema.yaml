@@ -1,0 +1,15 @@
+schema:
+  format:
+    openapi: "3.0.0"
+  environment_input_type: Input
+  types:
+    Input:
+      type: object
+      description: S3 Bucket
+      properties:
+        archive:
+          type: boolean 
+          title: Enable Archive
+          description: Transition objects to Glacier after 7 days and delete after one year
+          default: false
+

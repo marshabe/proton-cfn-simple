@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SQS-Lambda based Worker service template
+
+Globals:
+  Function:
+    Runtime: {{service_instance.inputs.lambda_runtime}}
+    MemorySize: {{service_instance.inputs.lambda_memory}}
+    Timeout: {{service_instance.inputs.lambda_timeout}}
+    Tracing: Active
+
+
+Resources:
+  # Lambda Function - uses Globals to define additional configuration values
+  # Define the consumer Lambda function and EventBridge rule
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Description: Invoked by EventBridge rule
+    Properties:
+      {% if service_instance.inputs.code_uri is defined %}
+      Handler: {{service_instance.inputs.lambda_handler}}
+      CodeUri: {{service_instance.inputs.code_uri}}
+      {% else %}
+      Handler: index.lambda_handler
+      InlineCode: |
+        def lambda_handler(event, context):
+            print("default function deployed by Proton template")
+      {% endif %}
+      FunctionName: '{{service_instance.name}}-function'
+      Events:
+        Trigger:
+          Type: Schedule 
+          Properties:
+            Schedule: '{{service_instance.inputs.schedule_expression}}'
+            Enabled: true
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+
+Outputs:
+  LambdaFunction:
+    Description: LambdaFunction function name
+    Value: !Ref LambdaFunction
+  LambdaRuntime:
+    Description: The lambda runtime
+    Value: "{{service_instance.inputs.lambda_runtime}}"
